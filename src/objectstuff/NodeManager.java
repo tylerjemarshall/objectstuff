@@ -85,4 +85,28 @@ public class NodeManager {
 	}
 	
 	
+	/*
+	 * 
+	 * Currently can only have a single child or parent.
+	 * Can have any number of SubChildren.
+	 * Every node is and will be recursive.
+	 * 
+	 * What I want to do, have MANY relationship for parent and child, no subs.
+	 * 
+	 * How?
+	 * 
+	 * Will replace parent and child each with a list.
+	 * 
+	 * Need to make a visual to easily see connections, and make a lookup table.
+	 * 
+	 * Not sure. 
+	 * 
+	 * Food.
+	 * 
+	 * 
+	 */
+	 
+	
+	
+	
 }
