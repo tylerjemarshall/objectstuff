@@ -12,26 +12,135 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	private static final long serialVersionUID = 1L;
 	private String name;
 
-	Node parent = null;
-	Node child = null;
+	private Node parent = null;
+	//Node child = null;
 
+	
+	public Node findNode(String node) throws NullPointerException
+	{
+		for(Iterator<Node> z = iterator(); z.hasNext();) {
+		    Node item = z.next();
+		    if (item.getName().equals(node)) return item;   
+		}
+		
+		try
+		{
+			if(parent.getName().equals(node)) 
+				{			
+					return parent;
+				}
+		}
+		catch (NullPointerException npe)
+		{
+			throw npe;
+		}
+		return null;
+	}
+	
+	public Node findNodeR(String node) throws NullPointerException
+	{
+		return findNodeR(node, 5);
+	}
+	
+	public Node findNodeR(String node, int level) throws NullPointerException
+	{
+		System.out.println("Level: " + level);
+		if (name.equals(node))return this;
+		
+		
+		
+		Node temp = findParentNodeR(node, level);
+		
+		//if no parent found, find child
+		
+		
+		
+		if (temp == null)
+		{
+			temp = findChildNodeR(node, level);
+		}
+		else
+			return temp;
+		
+		return temp;
+
+	}
+	
+	
+	public Node findChildNodeR(String node)
+	{
+		
+		return findChildNodeR(node, 5);
+	}
+	
+	public Node findChildNodeR(String node, int level)
+	{
+		System.out.println("LevelC: " + level);
+		
+		Node temp = null;
+		for(Iterator<Node> z = iterator(); z.hasNext();) {
+		    Node item = z.next();
+		    if (item.getName().equals(node) && level > 0) 
+		    	{
+		    		System.out.println("Found C at level " + level);
+		    		return item;   
+		    	}
+		    else if (level > 0) //this should go into each childs child 5 generations down
+		    {
+		    	try
+		    	{
+		    		temp= item.findChildNodeR(node, level-1);
+		    	}
+		    	catch (NullPointerException npe)
+		    	{
+		    		
+		    	}
+		    	
+		    }
+		    
+		    
+		}
+		return temp;
+		
+		
+		
+		
+	}
+	
+	
+	public Node findParentNodeR(String node)
+	{
+		return findParentNodeR(node, 5);
+		
+	}
+	
+	public Node findParentNodeR(String node, int level)
+	{
+		System.out.println("LevelP: " + level);
+		try
+		{
+			if (parent.getName().equals(node) && level > 0) 
+				return parent;
+			else if (level == 0 || level < 0)
+				return null;
+			else	
+				return parent.findParentNodeR(node, level-1);
+		}
+		catch (NullPointerException npe)
+		{
+			return null;
+		}
+		
+		
+	}
+	
 	public Node(String name) {
 		n = new ArrayList<Node>();
 		this.name = name;
 	}
 
 	public String toString() {
-		String parent = "null";
-		try {
-			parent = this.getParent().getName();
-		} catch (Exception npe) {}
-		
-
-		String child = "null";
-		try {
-			child = this.getChild().getName();
-		} catch (Exception npe) {}
-		return this.name + "(" + parent + ", " + child + ") " + n;
+		return this.name; 
 	}
 
 	public ArrayList<Node> getSubNodeList()
@@ -45,17 +154,21 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	}
 
 	public void setParent(Node parent) {
+
 		this.parent = parent;
-		this.parent.child = this;
-	}
+		
+		parent.add(this, true);
 
-	public Node getChild() {
-		return child;
 	}
+	public void setParent(Node parent, Boolean recursive) {
 
-	public void setChild(Node child) {
-		this.child = child;
-		this.child.parent = this;
+		if (!recursive)
+		{
+			parent.add(this, true);
+		}
+		this.parent = parent;
+		
+
 	}
 
 	public String getName() {
@@ -67,9 +180,21 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	}
 
 	public boolean add(Node arg0) {
-		arg0.setParent(this);
+		arg0.setParent(this, true);
 		return n.add(arg0);
 	}
+	
+	public boolean add(Node arg0, Boolean recursive)
+	{
+		if (!recursive)
+		{
+			arg0.setParent(this, true);
+		}
+		return n.add(arg0);
+		
+	}
+	
+
 
 	public void add(int arg0, Node arg1) {
 		arg1.setParent(this);
