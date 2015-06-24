@@ -11,7 +11,7 @@ import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
+//import java.util.Iterator;
 
 
 
@@ -41,14 +41,21 @@ public class NodeManager extends JFrame {
 	private JLabel lblName = new JLabel("Name", JLabel.CENTER);
 	//Center
 	private JLabel lblChild = new JLabel("Children: ", JLabel.LEFT);
-	private JList<String> childList = new JList<String>();
-	JScrollPane sclChild = new JScrollPane (childList);
+	private JList<String> lstChild = new JList<String>();
+	private JScrollPane sclChild = new JScrollPane (lstChild);
+	
 	private JLabel lblParent = new JLabel("Parent: ", JLabel.LEFT);
-	private JList<String> parentList = new JList<String>();
-	JScrollPane sclParent = new JScrollPane (parentList);
-	private JLabel lblDesc = new JLabel("Description: ", JLabel.LEFT);
+	private JList<String> lstParent = new JList<String>();
+	private JScrollPane sclParent = new JScrollPane (lstParent);
+	
+	private JLabel lblSib = new JLabel("Siblings: ", JLabel.LEFT);
+	private JList<String> lstSib = new JList<String>();
+	private JScrollPane sclSib = new JScrollPane (lstSib);
+	
+	private JLabel lblError = new JLabel("Errors: ", JLabel.LEFT);
+	
 	private JTextPane txtDesc = new JTextPane();
-	JScrollPane sclDesc = new JScrollPane (txtDesc);
+	private JScrollPane sclDesc = new JScrollPane (txtDesc);
 	//South
 	private JButton btnSearch = new JButton("Search: ");
 	private JTextField txtSearch = new JTextField("");
@@ -68,26 +75,32 @@ public class NodeManager extends JFrame {
 		setLocationRelativeTo(getParent());
 
 		Font bigFont = new Font("Serif",Font.BOLD,26);
-		Font mediumFont = new Font("Serif",Font.BOLD,18);
-//		Font smallFont = new Font("Serif",Font.BOLD,12);
+		Font mediumFont = new Font("Serif",Font.BOLD,16);
+		Font smallFont = new Font("Serif",Font.BOLD,12);
 		
 		lblTitle.setFont(bigFont);
 		lblName.setFont(mediumFont);
 		lblParent.setFont(mediumFont);
 		lblChild.setFont(mediumFont);
-		lblDesc.setFont(bigFont);
+		lblSib.setFont(mediumFont);
+		lblError.setFont(smallFont);
 		
 		
-		childList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		childList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		childList.setVisibleRowCount(-1);
-		childList.setFont(bigFont);
+		lstChild.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		lstChild.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		lstChild.setVisibleRowCount(-1);
+		lstChild.setFont(bigFont);
 
 		
-		parentList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		parentList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		parentList.setVisibleRowCount(-1);
-		parentList.setFont(bigFont);
+		lstParent.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		lstParent.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		lstParent.setVisibleRowCount(-1);
+		lstParent.setFont(bigFont);
+		
+		lstSib.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		lstSib.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		lstSib.setVisibleRowCount(-1);
+		lstSib.setFont(bigFont);
 		
 		sclDesc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	    sclDesc.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -104,7 +117,7 @@ public class NodeManager extends JFrame {
 		//final Panel test = new Panel();
 		
 		final Panel listBox = new Panel();
-		listBox.setLayout(new GridLayout(2, 2, 0, 0)) ;
+		listBox.setLayout(new GridLayout(3, 2, 0, 0)) ;
 		
 		final Panel descBox = new Panel();
 		descBox.setLayout(new GridLayout(2, 1, 0, 0));
@@ -129,15 +142,15 @@ public class NodeManager extends JFrame {
 		listBox.add(lblParent);
 		listBox.add(sclParent);
 		
+		listBox.add(lblSib);
+		listBox.add(sclSib);
+		
 		center.add(listBox);
 		
-//		center.add(lblChild);
-//		center.add(sclChild);
-		
-		descBox.add(lblDesc);
+		descBox.add(lblError);
 		descBox.add(sclDesc);
 		center.add(descBox);
-//		center.add(sclDesc);
+
 		
 		
 		south.add(btnAdd);
@@ -156,13 +169,13 @@ public class NodeManager extends JFrame {
 				if (!e.getValueIsAdjusting()) {
 					JList jl = (JList) e.getSource();
 					String name = (String) jl.getSelectedValue();				
-					select(selectedNode.findNodeR(name, 1));
+					select(selectedNode.findNode(name, 1));
 			}
 		}};
 		
 		
-		childList.addListSelectionListener(selectionListener);
-		parentList.addListSelectionListener(selectionListener);
+		lstChild.addListSelectionListener(selectionListener);
+		lstParent.addListSelectionListener(selectionListener);
 
 		
 		//Default Close
@@ -184,16 +197,8 @@ public class NodeManager extends JFrame {
 		});
 
 		
-		//Add Button
-		btnAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				selectedNode.add(txtAdd.getText(), selectedNode);
-			}
-		});
-
-				
-		//Add TextField
-		txtAdd.addActionListener(new ActionListener() {
+		
+		ActionListener addListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try
 				{
@@ -209,7 +214,13 @@ public class NodeManager extends JFrame {
 				txtAdd.setText("");
 				
 			}
-		});
+		};
+			
+		//Add Button
+		btnAdd.addActionListener(addListener);
+
+		//Add TextField
+		txtAdd.addActionListener(addListener);
 				
 		//Exit Button
 		btnExit.addActionListener(new ActionListener() {
@@ -222,7 +233,7 @@ public class NodeManager extends JFrame {
 		//Search Button
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				select(selectedNode.findNodeR(txtSearch.getText()));
+				select(selectedNode.findNode(txtSearch.getText()));
 				
 			}
 		});
@@ -231,7 +242,7 @@ public class NodeManager extends JFrame {
 		txtSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Node temp = null;
-				temp = selectedNode.findNodeR(txtSearch.getText(), 5, true);
+				temp = selectedNode.findNode(txtSearch.getText(), 5, true);
 				select(temp);
 				txtSearch.setText("");
 			}
@@ -285,30 +296,40 @@ public class NodeManager extends JFrame {
 	public void refresh()
 	{
 		Node master = new Node("Tyler");
-		master.setParent(new Node("Clinton"));
+		//master.add(new Node("Test"));
+		master.addParent(new Node("Clinton"));
+		master.addParent(new Node("Terry"));
 		
+		master.add("Justin", "Terry");
+		
+		master.findNode("Terry").addParent(new Node("Diana"));
+		master.findNode("Terry").addParent(new Node("George"));
 		
 		master.add(new Node("Tyler 2.0"));
 		master.add(new Node("Tyler 3.0"));
 		master.add(new Node("Tyler Jr"));
 		
-		master.findNodeR("Tyler 2.0", 1).add(new Node("Tyler Jr Jr"));
-		master.findNodeR("Tyler 3.0", 1).add(new Node("Tyler Jr 2.0"));
-		master.getParent().setParent(new Node("Eric"));
-		master.getParent().getParent().setParent(new Node("Eric's Dad"));
+
+		master.add("Tyler Jr Jr", "Tyler 2.0");
+		
+		master.add("Tyler 3.0", "Tyler Jr 2.0");
+		
+		master.findNode("Clinton").addParent(new Node("Eric"));
+		master.findNode("Eric").addParent(new Node("Eric's Dad"));
 		
 		
-		master.findNodeR("Tyler Jr Jr", 5).add(new Node("Mini Tyler"));
-		master.findNodeR("Clinton", 2).add(new Node("Justin"));
+		master.findNode("Tyler Jr Jr", 6).add(new Node("Mini Tyler"));
+		master.findNode("Clinton", 2).add(new Node("Justin"));
 		
-		master.getParent().findNodeR("Justin", 3).add(new Node("Mini Justin"));
+		
+		master.getParent().get(0).findNode("Justin", 3).add(new Node("Mini Justin"));
 		
 		master.add(new Node("Laptop"));
-		master.findNodeR("Laptop").add(new Node("Keyboard"));
-		master.findNodeR("Laptop").add(new Node("Mouse"));
+		master.findNode("Laptop").add(new Node("Keyboard"));
+		master.findNode("Laptop").add(new Node("Mouse"));
 		
 		master.add("Touchpad", "Laptop");
-		master.add("Justin", "Eric");
+		//master.add("Justin", "Eric");
 		
 		master.add("Hunger", "Tyler");
 		
@@ -316,11 +337,12 @@ public class NodeManager extends JFrame {
 		select(selectedNode);
 	}
 	
+
+	
 	/**
 	 * Focuses the NodeManager on the selected node.
 	 * @param n Node being selected
 	 */
-	@SuppressWarnings("deprecation")
 	public void select(Node n)
 	{
 		if (n == null) 
@@ -329,27 +351,15 @@ public class NodeManager extends JFrame {
 				return;
 			}
 		
-		String[] listData = new String[n.size()];
-		int x = 0;
-		
-		Iterator<Node> i = n.getSubNodeList().iterator();
-		for(Iterator<Node> z = i; z.hasNext();) {
-		    Node item = z.next();
-		    
-		    listData[x]=item.toString();
-		    x++; 
-		}
-	    childList.setListData(listData);
-	    try
-	    {
-	    	parentList.show();
-	    	parentList.setListData(new String[]{n.getParent().getName()});
-	    }
-	    catch(Exception npe)
-	    {
-	    	parentList.hide();
-	    }
-		
+		String[] child = n.toStringArray(n);
+		String[] parent = n.toStringArray(n.getParent());
+
+	    lstChild.setListData(child);
+
+	    lstParent.setListData(parent);
+	    
+//	    lstSib.setListData(n.getSiblings());
+	    
 		lblName.setText(n.getName());	
 		
 		append("Node Found: " + n.getName(), Color.BLUE);
@@ -357,6 +367,10 @@ public class NodeManager extends JFrame {
 		
 	}
 	
+	public String[] getThing(String[] s)
+	{		
+		return s;
+	}
 	
 	
 	public static void main(String[] args)
