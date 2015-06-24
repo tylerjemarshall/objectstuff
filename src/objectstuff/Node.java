@@ -136,7 +136,14 @@ public class Node implements NodeListInterface, Comparable<Node> {
 							like=item;
 					}
 					
-					temp = item.findChildNodeR(node, level - 1);
+					
+					Node temp1 = item.findParentNodeR(node, level - 1);
+					Node temp2 = item.findChildNodeR(node, level - 1);
+					if (temp1 != null) temp = temp1;
+					if (temp2 != null) temp = temp2;
+					
+					//temp = item.findChildNodeR(node, level - 1);
+					
 					if (temp != null)
 						found = temp;
 				} catch (NullPointerException npe) {
@@ -200,13 +207,27 @@ public class Node implements NodeListInterface, Comparable<Node> {
 			}
 			else
 			{
-				return parent.findParentNodeR(node, level - 1);
+				Node temp1 = parent.findParentNodeR(node, level - 1);
+				Node temp2 = parent.findChildNodeR(node, level - 1);
+				if (temp1 != null) return temp1;
+				if (temp2 != null) return temp2;
+				return null;
 			}
 				
 		} catch (NullPointerException npe) {
 			return null;
 		}
 
+	}
+	
+	
+	public boolean add(String node, String parent)
+	{
+		Node temp = findNodeR(parent);
+		if (temp != null)
+			return temp.add(new Node(node));
+		else
+			 return false;
 	}
 	
 	public Node(String name) {

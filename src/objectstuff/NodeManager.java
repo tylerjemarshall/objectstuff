@@ -267,6 +267,17 @@ public class NodeManager extends JFrame {
 		master.findNodeR("Tyler Jr Jr", 5).add(new Node("Mini Tyler"));
 		master.findNodeR("Clinton", 2).add(new Node("Justin"));
 		
+		master.getParent().findNodeR("Justin", 3).add(new Node("Mini Justin"));
+		
+		master.add(new Node("Laptop"));
+		master.findNodeR("Laptop").add(new Node("Keyboard"));
+		master.findNodeR("Laptop").add(new Node("Mouse"));
+		
+		master.add("Touchpad", "Laptop");
+		master.add("Justin", "Eric");
+		
+		master.add("Hunger", "Tyler");
+		
 		selectedNode = master;
 		select(selectedNode);
 	}
