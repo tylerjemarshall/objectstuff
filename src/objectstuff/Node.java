@@ -13,125 +13,200 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	private String name;
 
 	private Node parent = null;
-	//Node child = null;
+	private String desc = "Description";
 
 	
-	public Node findNode(String node) throws NullPointerException
-	{
-		for(Iterator<Node> z = iterator(); z.hasNext();) {
-		    Node item = z.next();
-		    if (item.getName().equals(node)) return item;   
+	/**Non-Recursively searches for immediate parent then immediate child.
+	 * @param node
+	 * @return Node
+	 * @throws NullPointerException
+	 * @deprecated
+	 */
+	public Node findNode(String node) throws NullPointerException {
+		for (Iterator<Node> z = iterator(); z.hasNext();) {
+			Node item = z.next();
+			if (item.getName().equals(node))
+				return item;
 		}
-		
-		try
-		{
-			if(parent.getName().equals(node)) 
-				{			
-					return parent;
-				}
-		}
-		catch (NullPointerException npe)
-		{
+
+		try {
+			if (parent.getName().equals(node)) {
+				return parent;
+			}
+		} catch (NullPointerException npe) {
 			throw npe;
 		}
 		return null;
 	}
+
+	/**
+	 * Uses findParentNodeR first, then tries findChildNodeR
+	 * Defaults to 5 depth search
+	 * Defaults to exact search
+	 * @param node
+	 * @return
+	 * @throws NullPointerException
+	 */
+	public Node findNodeR(String node) throws NullPointerException {
+		return findNodeR(node, 5, false);
+	}
+
 	
-	public Node findNodeR(String node) throws NullPointerException
-	{
-		return findNodeR(node, 5);
+	/**
+	 * Uses findParentNodeR first, then tries findChildNodeR
+	 * Defaults to 5 depth search
+	 * Defaults to exact search
+	 * @param node
+	 * @return
+	 * @throws NullPointerException
+	 */
+	public Node findNodeR(String node, int level) throws NullPointerException {
+		return findNodeR(node, level, false);
 	}
 	
-	public Node findNodeR(String node, int level) throws NullPointerException
-	{
-		System.out.println("Level: " + level);
-		if (name.equals(node))return this;
+	
+	/**
+	 * Uses findParentNodeR first, then tries findChildNodeR
+	 * @param node name of node
+	 * @param level depth of search
+	 * @return Node
+	 * @throws NullPointerException
+	 */
+	public Node findNodeR(String node, int level, Boolean blnLike) throws NullPointerException {
+
 		
 		
 		
-		Node temp = findParentNodeR(node, level);
+		if (name.equals(node)) return this;
+	
+		Node temp = findParentNodeR(node, level, blnLike);
 		
-		//if no parent found, find child
+		return (temp!=null) ? temp : 
+			(temp!=null) ? temp : findChildNodeR(node, level, blnLike);
+
+	}
+
+	/**
+	 * Searches for nearest child node by name, to specified depth
+	 * Defaults to 5 depth search.
+	 * Defaults to exact match
+	 * @param node name of node
+	 * @return Node
+	 */
+	public Node findChildNodeR(String node) {
+		return findChildNodeR(node, 5, false);
+	}
+	/**
+	 * Searches for nearest child node by name, to specified depth
+	 * Defaults to 5 depth search.
+	 * Defaults to exact match
+	 * @param node name of node
+	 * @param level depth of search
+	 * @return Node
+	 */
+	public Node findChildNodeR(String node, int level) {
+		return findChildNodeR(node, level, false);
+	}
+
+	/**
+	 * Searches for nearest child node by name, to specified depth
+	 * @param node name of node
+	 * @param level depth of search
+	 * @return Node
+	 */
+	public Node findChildNodeR(String node, int level, Boolean blnLike) {
+
+		Node temp = null;
+		Node found = null;
+		Node like = null;
+
+
 		
-		
-		
-		if (temp == null)
-		{
-			temp = findChildNodeR(node, level);
+		for (Iterator<Node> z = iterator(); z.hasNext();) {
+			Node item = z.next();
+			if (item.getName().equals(node) && level > 0) {
+				found = item;
+			} 
+			else if (level > 0) {
+				try {
+					
+					if (blnLike && item != null)
+					{
+						if (item.getName().toLowerCase().contains(node.toLowerCase()))
+							like=item;
+					}
+					
+					temp = item.findChildNodeR(node, level - 1);
+					if (temp != null)
+						found = temp;
+				} catch (NullPointerException npe) {
+				}
+			}
 		}
-		else
-			return temp;
-		
+		if (found != null)
+		{
+			return found;
+		}
+		else if (like != null && blnLike)
+		{
+			return like;
+		}
 		return temp;
+	}
+
+	/**
+	 * Searches for nearest parent node by name, to specified depth
+	 * Defaults to 5 depth search.
+	 * @param node name of node
+	 * @return Node
+	 */
+	public Node findParentNodeR(String node) {
+		return findParentNodeR(node, 5, false);
+
+	}
+
+	
+	/**
+	 * Searches for nearest parent node by name, to specified depth
+	 * Defaults to 5 depth search.
+	 * @param node name of node
+	 * @return Node
+	 */
+	public Node findParentNodeR(String node, int level) {
+		return findParentNodeR(node, level, false);
 
 	}
 	
 	
-	public Node findChildNodeR(String node)
-	{
-		
-		return findChildNodeR(node, 5);
-	}
-	
-	public Node findChildNodeR(String node, int level)
-	{
-		System.out.println("LevelC: " + level);
-		
-		Node temp = null;
-		for(Iterator<Node> z = iterator(); z.hasNext();) {
-		    Node item = z.next();
-		    if (item.getName().equals(node) && level > 0) 
-		    	{
-		    		System.out.println("Found C at level " + level);
-		    		return item;   
-		    	}
-		    else if (level > 0) //this should go into each childs child 5 generations down
-		    {
-		    	try
-		    	{
-		    		temp= item.findChildNodeR(node, level-1);
-		    	}
-		    	catch (NullPointerException npe)
-		    	{
-		    		
-		    	}
-		    	
-		    }
-		    
-		    
-		}
-		return temp;
-		
-		
-		
-		
-	}
-	
-	
-	public Node findParentNodeR(String node)
-	{
-		return findParentNodeR(node, 5);
-		
-	}
-	
-	public Node findParentNodeR(String node, int level)
-	{
-		System.out.println("LevelP: " + level);
-		try
-		{
-			if (parent.getName().equals(node) && level > 0) 
+	/**
+	 * Searches for nearest parent node by name, to specified depth
+	 * @param node name of node
+	 * @param level depth of search
+	 * @return Node
+	 */
+	public Node findParentNodeR(String node, int level, Boolean blnLike) {
+		try {
+			if (parent.getName().equals(node) && level > 0)
+			{
 				return parent;
+			}
 			else if (level == 0 || level < 0)
+			{
 				return null;
-			else	
-				return parent.findParentNodeR(node, level-1);
-		}
-		catch (NullPointerException npe)
-		{
+			}
+			else if (parent.getName().toLowerCase().contains(node.toLowerCase()) && blnLike)
+			{
+				return parent;
+			}
+			else
+			{
+				return parent.findParentNodeR(node, level - 1);
+			}
+				
+		} catch (NullPointerException npe) {
 			return null;
 		}
-		
-		
+
 	}
 	
 	public Node(String name) {
@@ -179,6 +254,14 @@ public class Node implements NodeListInterface, Comparable<Node> {
 		this.name = name;
 	}
 
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
 	public boolean add(Node arg0) {
 		arg0.setParent(this, true);
 		return n.add(arg0);
@@ -214,6 +297,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 		n.clear();
 	}
 
+	
 	public boolean contains(Object arg0) {
 		return n.contains(arg0);
 	}
