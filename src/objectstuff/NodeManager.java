@@ -52,6 +52,9 @@ public class NodeManager extends JFrame {
 	//South
 	private JButton btnSearch = new JButton("Search: ");
 	private JTextField txtSearch = new JTextField("");
+	private JButton btnAdd = new JButton("Add: ");
+	private JTextField txtAdd = new JTextField("");
+	
 	private JButton btnRefresh = new JButton("Refresh");
 	private JButton btnExit = new JButton("Exit");
 	//Local Variables
@@ -112,7 +115,7 @@ public class NodeManager extends JFrame {
 
 		north.setLayout(new GridLayout(2, 1, 5, 5));
 		center.setLayout(new GridLayout(2, 1, 5, 5));
-		south.setLayout(new GridLayout(2, 2, 5, 5));
+		south.setLayout(new GridLayout(3, 2, 5, 5));
 		
 		
 		
@@ -136,6 +139,9 @@ public class NodeManager extends JFrame {
 		center.add(descBox);
 //		center.add(sclDesc);
 		
+		
+		south.add(btnAdd);
+		south.add(txtAdd);
 		south.add(btnSearch);
 		south.add(txtSearch);	
 		south.add(btnRefresh);
@@ -177,6 +183,34 @@ public class NodeManager extends JFrame {
 			}
 		});
 
+		
+		//Add Button
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectedNode.add(txtAdd.getText(), selectedNode);
+			}
+		});
+
+				
+		//Add TextField
+		txtAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					selectedNode.add(txtAdd.getText(), selectedNode);
+				}
+				catch(NullPointerException npe)
+				{
+					append(npe.getMessage(), Color.RED);
+				}
+				
+				select(selectedNode);
+				
+				txtAdd.setText("");
+				
+			}
+		});
+				
 		//Exit Button
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

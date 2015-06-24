@@ -221,11 +221,18 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	}
 	
 	
+	
 	public boolean add(String node, String parent)
 	{
 		Node temp = findNodeR(parent);
-		if (temp != null)
-			return temp.add(new Node(node));
+		if (temp == null) return false;
+		return add(node, temp);
+	}
+	
+	public boolean add(String node, Node parent)
+	{
+		if (parent != null)
+			return parent.add(new Node(node));
 		else
 			 return false;
 	}
