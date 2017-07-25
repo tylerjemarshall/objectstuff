@@ -176,6 +176,7 @@ public class NodeManager extends JFrame {
 		
 		lstChild.addListSelectionListener(selectionListener);
 		lstParent.addListSelectionListener(selectionListener);
+		lstSib.addListSelectionListener(selectionListener);
 
 		
 		//Default Close
@@ -353,12 +354,14 @@ public class NodeManager extends JFrame {
 		
 		String[] child = n.toStringArray(n);
 		String[] parent = n.toStringArray(n.getParent());
+		String[] sibling = n.toStringArray(n.getSiblings());
 
 	    lstChild.setListData(child);
 
 	    lstParent.setListData(parent);
 	    
-//	    lstSib.setListData(n.getSiblings());
+	    //lstSib.setListData(n.getSiblingsList());
+	    lstSib.setListData(sibling);
 	    
 		lblName.setText(n.getName());	
 		
@@ -367,10 +370,10 @@ public class NodeManager extends JFrame {
 		
 	}
 	
-	public String[] getThing(String[] s)
-	{		
-		return s;
-	}
+//	public String[] getThing(String[] s)
+//	{		
+//		return s;
+//	}
 	
 	
 	public static void main(String[] args)

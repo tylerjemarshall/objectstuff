@@ -54,6 +54,8 @@ public class Node implements NodeListInterface, Comparable<Node> {
 		
 		return (temp!=null) ? temp : 
 			(temp!=null) ? temp : findChildNode(node, level, blnLike);
+		
+		//need to add siblings in here.
 
 	}
 
@@ -211,57 +213,31 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	}
 
 	
-	
-	public String[] getSiblings()
+	public ArrayList<Node>getSiblings()
 	{
-		String[][] s = new String[getParent().size()][];
-		
-		
-		int y = 0;
-		int x = 0;
-		Iterator<Node> u = getParent().iterator();;
-		for(Iterator<Node> z = u; z.hasNext();) {
-		    Node item = z.next();
-		    
-		    s[y]=item.toStringArray();
-		    x=+s[y].length;
-		    y++; 
-		    
-		}
-	    
-		
-		String[] ss = new String[y];
-		for(int z = 0; z < x; z++)
-		{
-			for(int q = 0; q < y; q++)
-			{
-				ss[z]+= s[q];
-				
-			}
-		}
-		
-		return ss;
-		
-		
-		
-	}
-	
-	public ArrayList<Node>getSiblingsList()
-	{
-//need to make a search.
 		ArrayList<Node> n = new ArrayList<Node>();
 		
+		ArrayList<Node> o = new ArrayList<Node>();
 
 		Iterator<Node> u = getParent().iterator();;
 		for(Iterator<Node> z = u; z.hasNext();) {
-		    Node item = z.next();
-		    n.add(item);
-		    
+			Node item = z.next();
+		    n.add(item); 
 		}
-		return n;
+
+		for(int k = 0; k < n.size(); k++)	
+		{
+			if (!o.contains(n.get(k)))
+				//need to filter duplicates somehow
+			{
+				o.addAll(n.get(k));
+			}
+			
+			
+				
+		}
 		
-		
-		
+		return o;
 		
 	}
 	
