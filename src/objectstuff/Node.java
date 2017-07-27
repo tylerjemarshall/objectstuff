@@ -45,15 +45,15 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	 * @return Node
 	 * @throws NullPointerException
 	 */
-	public Node findNode(String node, int level, Boolean blnLike) throws NullPointerException {
+	public Node findNode(String node, int level, Boolean likeBln) throws NullPointerException {
 
 		
 		if (name.equals(node)) return this;
 	
-		Node temp = findParentNode(node, level, blnLike);
+		Node temp = findParentNode(node, level, likeBln);
 		
 		return (temp!=null) ? temp : 
-			(temp!=null) ? temp : findChildNode(node, level, blnLike);
+			(temp!=null) ? temp : findChildNode(node, level, likeBln);
 		
 		//need to add siblings in here.
 
@@ -91,7 +91,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	 * @param level depth of search
 	 * @return Node
 	 */
-	public Node findParentNode(String node, int level, Boolean blnLike) {
+	public Node findParentNode(String node, int level, Boolean likeBln) {
 
 		Node temp = null;
 		Node found = null;
@@ -109,7 +109,10 @@ public class Node implements NodeListInterface, Comparable<Node> {
 			
 			if (level == 0 || level < 0)
 			{
-				return null;
+				
+				
+				//return (findSibling(node, true) != null) ? findSibling(node, true) : null;
+				return findSibling(node, true);
 			}
 			
 			try
@@ -124,7 +127,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 				compare = "";
 			}
 			
-			if (compare.contains(compare2) && blnLike)	
+			if (compare.contains(compare2) && likeBln)	
 			{
 				return item;
 			}
@@ -139,7 +142,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 			
 			
 		}
-		return (found != null) ? found : (like != null) ? like : temp;
+		return (found != null) ? found : (like != null) ? like : (findSibling(node, true) != null) ? findSibling(node, true) : temp;
 	}
 	
 	
@@ -172,7 +175,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	 * @param level depth of search
 	 * @return Node
 	 */
-	public Node findChildNode(String node, int level, Boolean blnLike) {
+	public Node findChildNode(String node, int level, Boolean likeBln) {
 
 		Node temp = null;
 		Node found = null;
@@ -190,7 +193,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 			{
 				try {
 					
-					if (blnLike && item != null)
+					if (likeBln && item != null)
 					{
 						if (item.getName().toLowerCase().contains(node.toLowerCase()))
 							like=item;
@@ -213,6 +216,39 @@ public class Node implements NodeListInterface, Comparable<Node> {
 	}
 
 	
+	public Node findSibling(String node)
+	{
+		return findSibling(node, false);
+	}
+	
+	
+	public Node findSibling(String node, boolean likeBln)
+	{
+			
+		for (Iterator<Node> z = getSiblings().iterator(); z.hasNext();) {
+
+			
+			Node item = z.next();
+			try
+			{
+				if (item.getName().toLowerCase().contains(node.toLowerCase())) {
+					return item;
+				} 
+			}
+			catch (NullPointerException npe)
+			{
+				
+			}
+			
+		
+		}
+		//this is sloppy and i will come back to it.
+		
+		
+		
+		return null;
+	}
+	
 	public ArrayList<Node>getSiblings()
 	{
 		ArrayList<Node> n = new ArrayList<Node>();
@@ -227,7 +263,7 @@ public class Node implements NodeListInterface, Comparable<Node> {
 
 		for(int k = 0; k < n.size(); k++)	
 		{
-			if (!o.contains(n.get(k)))
+			if (!o.containsAll(n.get(k)))
 				//need to filter duplicates somehow
 			{
 				o.addAll(n.get(k));

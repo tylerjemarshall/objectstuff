@@ -301,7 +301,11 @@ public class NodeManager extends JFrame {
 		master.addParent(new Node("Clinton"));
 		master.addParent(new Node("Terry"));
 		
-		master.add("Justin", "Terry");
+		master.add("Justin", "Terry"); 
+		master.add("Justin", "Clinton"); 
+		//this adds directly under Terry
+		//maybe do this differently...
+		
 		
 		master.findNode("Terry").addParent(new Node("Diana"));
 		master.findNode("Terry").addParent(new Node("George"));
@@ -320,7 +324,7 @@ public class NodeManager extends JFrame {
 		
 		
 		master.findNode("Tyler Jr Jr", 6).add(new Node("Mini Tyler"));
-		master.findNode("Clinton", 2).add(new Node("Justin"));
+		//master.findNode("Clinton", 2).add(new Node("Justin"));
 		
 		
 		master.getParent().get(0).findNode("Justin", 3).add(new Node("Mini Justin"));
@@ -348,7 +352,7 @@ public class NodeManager extends JFrame {
 	{
 		if (n == null) 
 			{
-				append("Node not found: " + txtSearch.getText(), Color.RED);
+				//append("1Node not found: " + txtSearch.getText(), Color.RED);
 				return;
 			}
 		
